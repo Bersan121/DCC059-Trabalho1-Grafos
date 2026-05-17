@@ -1,0 +1,37 @@
+============================================================
+INSTRUÇÕES DE COMPILAÇÃO E EXECUÇÃO - GRUPO G (DCC059)
+============================================================
+
+Este projeto foi desenvolvido utilizando C++ moderno. Certifique-se de ter um compilador compatível com o padrão C++11 ou superior instalado (como g++ ou clang).
+
+---
+1. COMPILAÇÃO VIA TERMINAL (GCC/G++)
+---
+Abra o seu terminal na raiz do projeto e execute o comando a seguir para compilar todos os arquivos presentes na pasta `src/`:
+
+$ g++ -std=c++11 src/main.cpp src/Grafo.cpp -o programa
+
+Esse comando gerará um executável chamado `programa` (ou `programa.exe` no Windows).
+
+---
+2. EXECUÇÃO
+---
+Após a compilação bem-sucedida, execute o binário gerado:
+
+No Linux / macOS:
+$ ./programa
+
+No Windows (Prompt de Comando ou PowerShell):
+$ .\programa.exe
+
+---
+3. FORMATO DE ARQUIVO DE ENTRADA (CS Academy)
+---
+Para carregar grafos utilizando a opção 2 do menu principal, utilize arquivos de texto estruturados linha por linha no formato:
+[Vértice_Origem] [Vértice_Destino] [Peso_Opcional]
+
+Exemplo para grafo ponderado (ex: arquivo `grafos/teste1.txt`):
+0 1 4.5
+1 2 2.0
+2 3 7.1
+0 3 10.0
