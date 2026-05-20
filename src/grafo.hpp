@@ -27,12 +27,13 @@ public:
     // Manipulação do grafo
     void inserirVertice();
     void removerVertice(int v);
-    void inserirAresta(int u, int v, int peso = 1.0);
+    void inserirAresta(int u, int v, int peso = 1);
     void removerAresta(int u, int v);
     bool verificarExisteAresta(int u, int v) const;
     void alterarPesoAresta(int u, int v, int novoPeso);
     void exibirGrafo() const;
     int getNumVertices() const;
+    int getPonderado() const;
 
     // Leitura do arquivo
     static grafo carregarDeArquivo(const std::string& nomeArquivo, bool orientado, bool ponderado);
