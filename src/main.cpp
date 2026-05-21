@@ -2,16 +2,17 @@
 #include "Grafo.hpp"
 
 void exibirMenu() {
-    cout << "\n====== MENU PRINCIPAL ======\n";
-    cout << "1. Executar testes automáticos (testAll)\n";
-    cout << "2. Exibir Grafo Atual\n";
-    cout << "3. Executar Algoritmo de Dijkstra\n";
-    cout << "4. Inserir Vértice\n";
-    cout << "5. Remover Vértice\n";
-    cout << "6. Inserir Aresta\n";
-    cout << "7. Remover Aresta\n";
-    cout << "0. Sair\n";
-    cout << "Escolha uma opção: ";
+    cout << endl << "====== MENU PRINCIPAL ======" << endl;
+    cout << "1. Executar testes automaticos (testAll)" << endl;
+    cout << "2. Exibir Grafo Atual" << endl;
+    cout << "3. Executar Algoritmo de Dijkstra" << endl;
+    cout << "4. Inserir Vertice" << endl;
+    cout << "5. Remover Vertice" << endl;
+    cout << "6. Inserir Aresta" << endl;
+    cout << "7. Remover Aresta" << endl;
+    cout << "8. Alterar peso Aresta" << endl;
+    cout << "0. Sair" << endl;
+    cout << "Escolha uma opcao: ";
 }
 
 int main() {
@@ -19,9 +20,9 @@ int main() {
     int ori, pond;
     cout << "Digite o caminho/nome do arquivo .txt: ";
     cin >> caminho;
-    cout << "O grafo é orientado? (1-Sim, 0-Não): ";
+    cout << "O grafo e orientado? (1-Sim, 0-Nao): ";
     cin >> ori;
-    cout << "O grafo é ponderado? (1-Sim, 0-Não): ";
+    cout << "O grafo e ponderado? (1-Sim, 0-Nao): ";
     cin >> pond;
     grafo g = grafo::carregarDeArquivo(caminho, ori == 1, pond == 1);
     g.exibirGrafo();
@@ -30,7 +31,7 @@ int main() {
     while (opcao != 0) {
         exibirMenu();
         if (!(cin >> opcao)) {
-            cout << "Entrada inválida! Encerrando.\n";
+            cout << "Entrada invalida! Encerrando." << endl;
             break;
         }
 
@@ -43,7 +44,7 @@ int main() {
                 break;
             case 3: {
                 int orig;
-                cout << "Digite o vértice de origem para o Dijkstra (0 a " << g.getNumVertices() - 1 << "): ";
+                cout << "Digite o vertice de origem para o Dijkstra (0 a " << g.getNumVertices() - 1 << "): ";
                 cin >> orig;
                 g.dijkstra(orig);
                 break;
@@ -53,16 +54,16 @@ int main() {
                 break;
             case 5: {
                 int v;
-                cout << "Digite o índice do vértice a remover: ";
+                cout << "Digite o indice do vertice a remover: ";
                 cin >> v;
                 g.removerVertice(v);
                 break;
             }
             case 6: {
                 int u, v, p = 1;
-                cout << "Digite o vértice de origem u: ";
+                cout << "Digite o vertice de origem u: ";
                 cin >> u;
-                cout << "Digite o vértice de destino v: ";
+                cout << "Digite o vertice de destino v: ";
                 cin >> v;
                 if(g.getPonderado()){
                     cout << "Digite o peso: ";
@@ -73,18 +74,29 @@ int main() {
             }
             case 7: {
                 int u, v;
-                cout << "Digite o vértice de origem u: ";
+                cout << "Digite o vertice de origem u: ";
                 cin >> u;
-                cout << "Digite o vértice de destino v: ";
+                cout << "Digite o vertice de destino v: ";
                 cin >> v;
                 g.removerAresta(u, v);
                 break;
             }
+            case 8: {
+                int u, v, peso;
+                cout << "Digite o vertice de origem u da aresta que deseja modificar: ";
+                cin >> u;
+                cout << "Digite o vertice de destino v da aresta que deseja modificar: ";
+                cin >> v;
+                cout << "Digite o novo peso: ";
+                cin >> peso;
+                g.alterarPesoAresta(u, v, peso);
+                break;
+            }
             case 0:
-                cout << "Saindo...\n";
+                cout << "Saindo..." << endl;
                 break;
             default:
-                cout << "Opção inválida! Tente novamente.\n";
+                cout << "Opcao invalida! Tente novamente." << endl;
         }
     }
 

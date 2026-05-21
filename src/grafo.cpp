@@ -50,12 +50,13 @@ grafo grafo::carregarDeArquivo(const string& nomeArquivo, bool orientado, bool p
     for(int i = 0; i < arestasLidas.size(); ++i) {
         g.inserirAresta(arestasLidas[i].u, arestasLidas[i].v, arestasLidas[i].peso);
     }
-    cout << "Grafo carregado de " << nomeArquivo << "\n";
+    cout << "Grafo carregado de " << nomeArquivo << endl;
     return g;
 }
 
 void grafo::exibirGrafo() const{
     cout << endl << "Matriz de Adjacencia" << endl;
+    cout << "   ";
     for(int i = 0; i < numVertices; i++)
         cout << setw(4) << i;
     cout << endl;
@@ -82,21 +83,31 @@ void grafo::inserirVertice(){
     }
     numVertices++;
     matrizAdjacencia.push_back(vector<aresta>(numVertices));
-    cout << "Vertice " << numVertices - 1 << "inserido." << endl;
+    cout << "Vertice " << numVertices - 1 << " inserido com sucesso!." << endl;
+}
+
+void grafo::removerVertice(int v){
+    //Bloco 2
 }
 
 void grafo::inserirAresta(int u, int v, int peso){
     if(u < 0 || v < 0){
-        cout << "Operacao invalida!";
+        cout << "Operacao invalida!"<< endl;
     }
     else if(u >= numVertices){
-        this->inserirVertice();
-        if(u == v)
+        if(u == v){
+            cout << "Vertice " << u << " sera criados na posicao " << numVertices << endl;
+            this->inserirVertice();
             this->inserirAresta(numVertices -1, numVertices -1, peso);
-        else
+        }
+        else{
+            cout << "Vertice " << u << " sera criado na posicao " << numVertices << endl;
+            this->inserirVertice();
             this->inserirAresta(numVertices -1, v, peso);
+        }
     }
     else if(v >= numVertices){
+        cout << "Vertice " << v << " sera criado na posicao " << numVertices << endl;
         this->inserirVertice();
         this->inserirAresta(u, numVertices -1, peso);
     }
@@ -113,7 +124,46 @@ void grafo::inserirAresta(int u, int v, int peso){
             else
                 matrizAdjacencia[v][u].peso = 1;
         }
+        cout << "Aresta inserida com sucesso!" << endl;
     }
+}
+
+void grafo::removerAresta(int u, int v){
+    //Bloco 2
+}
+
+bool grafo::verificarExisteAresta(int u, int v) const{
+    //Bloco 2
+    return 0;
+}
+
+
+void grafo::alterarPesoAresta(int u, int v, int novoPeso){
+    //Bloco 2
+}
+
+void grafo::testAll(){
+    //Bloco 2
+}
+
+int grafo::calcularGrauVertice(int v) const{
+    //Bloco 3
+    return 0;
+}
+
+vector<int> grafo::listarVizinhosVertice(int v) const{
+    //Bloco 3
+    vector<int> vizinhos;
+    return vizinhos;
+}
+
+bool grafo::verificarAdjacentes(int u, int v) const{
+    //Bloco 3
+    return 0;
+}
+
+void grafo::dijkstra(int origem) const{
+    //Bloco 3
 }
 
 int grafo::getNumVertices() const{
