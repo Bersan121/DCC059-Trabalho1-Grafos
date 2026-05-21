@@ -1,0 +1,27 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "build cpp",
+      "type": "shell",
+      "command": "g++",
+      "args": [
+        "-Wall",
+        "-Wextra",
+        "-g3",
+        "main.cpp",
+        "grafo.cpp",
+        "-o",
+        "output/main.exe"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": ["$gcc"]
+    }
+  ]
+}

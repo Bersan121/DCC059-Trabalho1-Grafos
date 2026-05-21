@@ -83,11 +83,19 @@ void grafo::inserirVertice(){
     }
     numVertices++;
     matrizAdjacencia.push_back(vector<aresta>(numVertices));
-    cout << "Vertice " << numVertices - 1 << " inserido com sucesso!." << endl;
+    cout << "Vertice " << numVertices - 1 << " inserido com sucesso!" << endl;
 }
 
 void grafo::removerVertice(int v){
-    //Bloco 2
+
+    for(int i = 0; i < numVertices; i++){
+        matrizAdjacencia[i].erase(matrizAdjacencia[i].begin() + v);
+    }
+
+    matrizAdjacencia.erase(matrizAdjacencia.begin() + v);
+    numVertices--;
+
+    cout << "Vertice " << v << " removido com sucesso!" << endl;
 }
 
 void grafo::inserirAresta(int u, int v, int peso){
@@ -129,21 +137,91 @@ void grafo::inserirAresta(int u, int v, int peso){
 }
 
 void grafo::removerAresta(int u, int v){
-    //Bloco 2
+
+    if(u < 0 || v < 0 || u >= numVertices || v >= numVertices){
+        cout << "Índices inválidos" << endl;
+        return;
+    }
+
+    if(verificarExisteAresta(u, v)){
+        cout << "Não existe aresta entre os vértices " << u << " e " << v << endl;
+        return;
+    }
+
+    matrizAdjacencia[u][v].existe = false;
+    matrizAdjacencia[u][v].peso = 0;
+
+    if(!orientado){
+        matrizAdjacencia[v][u].existe = false;
+        matrizAdjacencia[v][u].peso = 0;
+    }
+
+    cout << "Aresta removida com sucesso!" << endl;
 }
 
 bool grafo::verificarExisteAresta(int u, int v) const{
-    //Bloco 2
-    return 0;
+
+    if(u < 0 || v < 0){
+        return false;
+    }
+
+    else{
+        if(matrizAdjacencia[u][v].existe){
+            return true;
+        }
+
+    return false;
+    }
 }
 
-
 void grafo::alterarPesoAresta(int u, int v, int novoPeso){
-    //Bloco 2
+
+    if(verificarExisteAresta(u, v)){
+        matrizAdjacencia[u][v].peso = novoPeso;
+    }
+    else
+    {
+        cout << "Aresta não existe!" << endl;
+        return;
+    }
+
+    if(orientado){
+        matrizAdjacencia[v][u].peso = novoPeso;
+    }
+
+    cout << "Peso alterado com sucesso!" << endl;
 }
 
 void grafo::testAll(){
-    //Bloco 2
+    cout << endl;
+    cout << "===== TESTE AUTOMATICO =====" << endl;
+
+    grafo obj(0, false, false);
+
+    cout << endl << "Grafo inicial:" << endl;
+    obj.exibirGrafo();
+
+    cout << endl << "Inserindo vertice..." << endl;
+    obj.inserirVertice();
+    obj.exibirGrafo();
+
+    cout << endl << "Inserindo aresta 0 -> ultimo vertice..." << endl;
+    obj.inserirAresta(0, obj.getNumVertices() - 1, 7);
+    obj.exibirGrafo();
+
+    cout << endl << "Alterando peso..." << endl;
+    obj.alterarPesoAresta(0, obj.getNumVertices() - 1, 20);
+    obj.exibirGrafo();
+
+    cout << endl << "Removendo aresta..." << endl;
+    obj.removerAresta(0, obj.getNumVertices() - 1);
+    obj.exibirGrafo();
+
+    cout << endl << "Removendo ultimo vertice..." << endl;
+    obj.removerVertice(obj.getNumVertices() - 1);
+    obj.exibirGrafo();
+
+    cout << endl << "===== FIM DOS TESTES =====" << endl;
 }
 
 int grafo::calcularGrauVertice(int v) const{
