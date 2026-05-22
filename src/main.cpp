@@ -5,12 +5,9 @@
 
 using namespace std;
 
-// ============================================================================
-// BATERIA DE TESTES DO PROFESSOR (INTACTA)
-// ============================================================================
 void testAll() {
-    grafo gNaoOrientado(false); // Instancia de Grafo NAO Orientado
-    grafo gOrientado(true);     // Instancia de Grafo ORIENTADO
+    grafo gNaoOrientado(false);
+    grafo gOrientado(true);
 
     int passou = 0;
     int falhou = 0;
@@ -224,14 +221,10 @@ void testAll() {
     std::cout << "==================================================\n\n";
 }
 
-// ============================================================================
-// MENU PRINCIPAL
-// ============================================================================
 int main() {
     grafo* gAtual = nullptr;
     int opcao = -1;
 
-    // Configuração inicial pedida pelo grupo
     string arquivo;
     int ehOrientado, ehPonderado;
     
@@ -261,7 +254,7 @@ int main() {
 
         switch (opcao) {
             case 1:
-                testAll(); // Agora chama o teste gigante do professor!
+                testAll();
                 break;
             case 2:
                 cout << "\nMatriz de Adjacencia:\n";

@@ -77,15 +77,7 @@ void grafo::inserirVertice(int v) {
 }
 
 void grafo::removerVertice(int v) {
-    if (v < 0 || v >= numVertices) return;
-    
-    // Remove coluna v de todas as linhas
-    for (int i = 0; i < numVertices; i++) {
-        matrizAdjacencia[i].erase(matrizAdjacencia[i].begin() + v);
-    }
-    // Remove a linha v inteira
-    matrizAdjacencia.erase(matrizAdjacencia.begin() + v);
-    numVertices--;
+
 }
 
 void grafo::inserirAresta(int u, int v, double peso) {
@@ -102,26 +94,15 @@ void grafo::inserirAresta(int u, int v, double peso) {
 }
 
 void grafo::removerAresta(int u, int v) {
-    if (u >= numVertices || v >= numVertices) return;
-    matrizAdjacencia[u][v].existe = false;
-    matrizAdjacencia[u][v].peso = 0.0;
-    if (!orientado) {
-        matrizAdjacencia[v][u].existe = false;
-        matrizAdjacencia[v][u].peso = 0.0;
-    }
+
 }
 
 void grafo::alterarPesoAresta(int u, int v, double peso) {
-    if (u >= numVertices || v >= numVertices) return;
-    if (matrizAdjacencia[u][v].existe) {
-        matrizAdjacencia[u][v].peso = peso;
-        if (!orientado) matrizAdjacencia[v][u].peso = peso;
-    }
+
 }
 
 bool grafo::verificarAresta(int u, int v) const {
-    if (u >= numVertices || v >= numVertices) return false;
-    return matrizAdjacencia[u][v].existe;
+    
 }
 
 bool grafo::saoAdjacentes(int u, int v) const {

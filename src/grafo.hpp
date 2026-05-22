@@ -20,13 +20,11 @@ private:
     void expandirMatriz(int novoTamanho);
 
 public:
-    // Construtor flexível que atende ao testAll e ao carregamento manual
     grafo(bool orientado = false, bool ponderado = true, int numVertices = 0);
 
     void carregarDeArquivo(const std::string& nomeArquivo);
     void exibirGrafo() const;
     
-    // Funções exigidas pelo testAll do professor
     void inserirVertice(int v);
     void removerVertice(int v);
     void inserirAresta(int u, int v, double peso = 1.0);
@@ -37,7 +35,6 @@ public:
     int grauVertice(int v) const;
     std::vector<int> listarVizinhos(int v) const;
     
-    // Seu Algoritmo
     void dijkstra(int origem) const;
 };
 
