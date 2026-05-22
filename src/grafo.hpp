@@ -1,12 +1,16 @@
 #ifndef GRAFO_HPP
 #define GRAFO_HPP
 
+#include <iostream>
 #include <vector>
 #include <string>
 
+using namespace std;
+
+// Estrutura para representar cada célula da Matriz de Adjacência
 struct aresta {
     bool existe = false;
-    double peso = 0.0;
+    int peso = 0;
 };
 
 class grafo {
@@ -14,28 +18,36 @@ private:
     int numVertices;
     bool orientado;
     bool ponderado;
-    std::vector<std::vector<aresta>> matrizAdjacencia;
-
-    // Função auxiliar para aumentar a matriz automaticamente
-    void expandirMatriz(int novoTamanho);
+    vector<std::vector<aresta>> matrizAdjacencia;
 
 public:
-    grafo(bool orientado = false, bool ponderado = true, int numVertices = 0);
+    // Construtor
+    grafo(int vertices, bool orientado, bool ponderado);
 
-    void carregarDeArquivo(const std::string& nomeArquivo);
-    void exibirGrafo() const;
-    
-    void inserirVertice(int v);
+    // Manipulação do grafo
+    void inserirVertice();
     void removerVertice(int v);
-    void inserirAresta(int u, int v, double peso = 1.0);
+    void inserirAresta(int u, int v, int peso = 1);
     void removerAresta(int u, int v);
-    void alterarPesoAresta(int u, int v, double peso);
-    bool verificarAresta(int u, int v) const;
-    bool saoAdjacentes(int u, int v) const;
-    int grauVertice(int v) const;
-    std::vector<int> listarVizinhos(int v) const;
-    
+    bool verificarExisteAresta(int u, int v) const;
+    void alterarPesoAresta(int u, int v, int novoPeso);
+    void exibirGrafo() const;
+    int getNumVertices() const;
+    int getPonderado() const;
+
+    // Leitura do arquivo
+    static grafo carregarDeArquivo(const std::string& nomeArquivo, bool orientado, bool ponderado);
+
+    // Informações sobre vértices
+    int calcularGrauVertice(int v) const;
+    vector<int> listarVizinhosVertice(int v) const;
+    bool verificarAdjacentes(int u, int v) const;
+
+    // Algoritmo Caminho mínimo de Dijkstra
     void dijkstra(int origem) const;
+
+    // Função de teste
+    static void testAll();
 };
 
 #endif
