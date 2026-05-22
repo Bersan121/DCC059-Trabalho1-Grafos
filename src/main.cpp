@@ -1,5 +1,7 @@
 #include <iostream>
-#include "Grafo.hpp"
+#include "grafo.hpp"
+
+using namespace std;
 
 void exibirMenu() {
     cout << endl << "====== MENU PRINCIPAL ======" << endl;
@@ -24,6 +26,7 @@ int main() {
     cin >> ori;
     cout << "O grafo e ponderado? (1-Sim, 0-Nao): ";
     cin >> pond;
+    
     grafo g = grafo::carregarDeArquivo(caminho, ori == 1, pond == 1);
     g.exibirGrafo();
 
@@ -60,13 +63,15 @@ int main() {
                 break;
             }
             case 6: {
-                int u, v, p = 1;
+                // Alterado de int para double
+                int u, v; 
+                double p = 1.0; 
                 cout << "Digite o vertice de origem u: ";
                 cin >> u;
                 cout << "Digite o vertice de destino v: ";
                 cin >> v;
                 if(g.getPonderado()){
-                    cout << "Digite o peso: ";
+                    cout << "Digite o peso (pode ser decimal): ";
                     cin >> p;
                 }
                 g.inserirAresta(u, v, p);
@@ -82,12 +87,14 @@ int main() {
                 break;
             }
             case 8: {
-                int u, v, peso;
+                // Alterado de int para double
+                int u, v;
+                double peso;
                 cout << "Digite o vertice de origem u da aresta que deseja modificar: ";
                 cin >> u;
                 cout << "Digite o vertice de destino v da aresta que deseja modificar: ";
                 cin >> v;
-                cout << "Digite o novo peso: ";
+                cout << "Digite o novo peso (pode ser decimal): ";
                 cin >> peso;
                 g.alterarPesoAresta(u, v, peso);
                 break;
