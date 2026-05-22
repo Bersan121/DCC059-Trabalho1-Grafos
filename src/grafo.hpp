@@ -1,16 +1,12 @@
 #ifndef GRAFO_HPP
 #define GRAFO_HPP
 
-#include <iostream>
 #include <vector>
 #include <string>
 
-using namespace std;
-
-// Estrutura atualizada para double (exigência do professor)
 struct aresta {
     bool existe = false;
-    double peso = 0.0; 
+    double peso = 0.0;
 };
 
 class grafo {
@@ -18,28 +14,30 @@ private:
     int numVertices;
     bool orientado;
     bool ponderado;
-    vector<std::vector<aresta>> matrizAdjacencia;
+    std::vector<std::vector<aresta>> matrizAdjacencia;
+
+    // Função auxiliar para aumentar a matriz automaticamente
+    void expandirMatriz(int novoTamanho);
 
 public:
-    grafo(int vertices, bool orientado, bool ponderado);
+    // Construtor flexível que atende ao testAll e ao carregamento manual
+    grafo(bool orientado = false, bool ponderado = true, int numVertices = 0);
 
-    // Manipulação do grafo (Parte do seu colega)
-    void inserirVertice();
+    void carregarDeArquivo(const std::string& nomeArquivo);
+    void exibirGrafo() const;
+    
+    // Funções exigidas pelo testAll do professor
+    void inserirVertice(int v);
     void removerVertice(int v);
     void inserirAresta(int u, int v, double peso = 1.0);
     void removerAresta(int u, int v);
-    bool verificarExisteAresta(int u, int v) const;
-    void alterarPesoAresta(int u, int v, double novoPeso);
-    void exibirGrafo() const;
-    int getNumVertices() const;
-    int getPonderado() const;
-    static grafo carregarDeArquivo(const std::string& nomeArquivo, bool orientado, bool ponderado);
-    static void testAll();
-
-    // Informações sobre vértices (Sua Parte - Bloco 3)
-    int calcularGrauVertice(int v) const;
-    vector<int> listarVizinhosVertice(int v) const;
-    bool verificarAdjacentes(int u, int v) const;
+    void alterarPesoAresta(int u, int v, double peso);
+    bool verificarAresta(int u, int v) const;
+    bool saoAdjacentes(int u, int v) const;
+    int grauVertice(int v) const;
+    std::vector<int> listarVizinhos(int v) const;
+    
+    // Seu Algoritmo
     void dijkstra(int origem) const;
 };
 

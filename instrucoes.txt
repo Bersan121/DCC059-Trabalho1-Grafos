@@ -30,7 +30,7 @@ $ .\programa.exe
 Para carregar grafos utilizando a opção 2 do menu principal, utilize arquivos de texto estruturados linha por linha no formato:
 [Vértice_Origem] [Vértice_Destino] [Peso_Opcional]
 
-Exemplo para grafo ponderado (ex: arquivo `grafos/teste1.txt`):
+Exemplo para grafo ponderado (ex: arquivo `../grafos/grafoEx.txt`):
 0 1 4.5
 1 2 2.0
 2 3 7.1
