@@ -9,18 +9,18 @@ using namespace std;
 
 // Estrutura para representar cada célula da Matriz de Adjacência
 struct aresta {
-    bool existe = false;
-    int peso = 0;
+bool existe = false;
+int peso = 0;
 };
 
 class grafo {
-private:
+    private:
     int numVertices;
     bool orientado;
     bool ponderado;
     vector<std::vector<aresta>> matrizAdjacencia;
 
-public:
+    public:
     // Construtor
     grafo(int vertices, bool orientado, bool ponderado);
 
