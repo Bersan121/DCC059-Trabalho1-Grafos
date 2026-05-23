@@ -91,7 +91,6 @@ void grafo::inserirVertice(){
 }
 
 void grafo::removerVertice(int v){
-    if (v < 0 || v >= numVertices) return;
 
     for(int i = 0; i < numVertices; i++){
         matrizAdjacencia[i].erase(matrizAdjacencia[i].begin() + v);
@@ -143,12 +142,13 @@ void grafo::inserirAresta(int u, int v, int peso){
 }
 
 void grafo::removerAresta(int u, int v){
+
     if(u < 0 || v < 0 || u >= numVertices || v >= numVertices){
         cout << "Índices inválidos" << endl;
         return;
     }
 
-    if(!verificarExisteAresta(u, v)){
+    if(verificarExisteAresta(u, v)){
         cout << "Não existe aresta entre os vértices " << u << " e " << v << endl;
         return;
     }
