@@ -148,7 +148,7 @@ void grafo::removerAresta(int u, int v){
         return;
     }
 
-    if(verificarExisteAresta(u, v)){
+    if(!verificarExisteAresta(u, v)){
         cout << "Não existe aresta entre os vértices " << u << " e " << v << endl;
         return;
     }
