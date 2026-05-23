@@ -1,104 +1,418 @@
 #include <iostream>
-#include "Grafo.hpp"
+#include <vector>
+#include <algorithm>
+#include <iomanip>
+#include "grafo.hpp"
 
-void exibirMenu() {
-    cout << endl << "====== MENU PRINCIPAL ======" << endl;
-    cout << "1. Executar testes automaticos (testAll)" << endl;
-    cout << "2. Exibir Grafo Atual" << endl;
-    cout << "3. Executar Algoritmo de Dijkstra" << endl;
-    cout << "4. Inserir Vertice" << endl;
-    cout << "5. Remover Vertice" << endl;
-    cout << "6. Inserir Aresta" << endl;
-    cout << "7. Remover Aresta" << endl;
-    cout << "8. Alterar peso Aresta" << endl;
-    cout << "0. Sair" << endl;
-    cout << "Escolha uma opcao: ";
-}
+using namespace std;
 
-int main() {
-    string caminho;
-    int ori, pond;
-    cout << "Digite o caminho/nome do arquivo .txt: ";
-    cin >> caminho;
-    cout << "O grafo e orientado? (1-Sim, 0-Nao): ";
-    cin >> ori;
-    cout << "O grafo e ponderado? (1-Sim, 0-Nao): ";
-    cin >> pond;
-    grafo g = grafo::carregarDeArquivo(caminho, ori == 1, pond == 1);
-    g.exibirGrafo();
 
-    int opcao = -1;
-    while (opcao != 0) {
-        exibirMenu();
-        if (!(cin >> opcao)) {
-            cout << "Entrada invalida! Encerrando." << endl;
-            break;
-        }
+class MeuGrafo {
+    private:
+    grafo* grafoReal;
 
-        switch (opcao) {
-            case 1:
-                g.testAll();
-                break;
-            case 2:
-                g.exibirGrafo();
-                break;
-            case 3: {
-                int orig;
-                cout << "Digite o vertice de origem para o Dijkstra (0 a " << g.getNumVertices() - 1 << "): ";
-                cin >> orig;
-                g.dijkstra(orig);
-                break;
-            }
-            case 4:
-                g.inserirVertice();
-                break;
-            case 5: {
-                int v;
-                cout << "Digite o indice do vertice a remover: ";
-                cin >> v;
-                g.removerVertice(v);
-                break;
-            }
-            case 6: {
-                int u, v, p = 1;
-                cout << "Digite o vertice de origem u: ";
-                cin >> u;
-                cout << "Digite o vertice de destino v: ";
-                cin >> v;
-                if(g.getPonderado()){
-                    cout << "Digite o peso: ";
-                    cin >> p;
-                }
-                g.inserirAresta(u, v, p);
-                break;
-            }
-            case 7: {
-                int u, v;
-                cout << "Digite o vertice de origem u: ";
-                cin >> u;
-                cout << "Digite o vertice de destino v: ";
-                cin >> v;
-                g.removerAresta(u, v);
-                break;
-            }
-            case 8: {
-                int u, v, peso;
-                cout << "Digite o vertice de origem u da aresta que deseja modificar: ";
-                cin >> u;
-                cout << "Digite o vertice de destino v da aresta que deseja modificar: ";
-                cin >> v;
-                cout << "Digite o novo peso: ";
-                cin >> peso;
-                g.alterarPesoAresta(u, v, peso);
-                break;
-            }
-            case 0:
-                cout << "Saindo..." << endl;
-                break;
-            default:
-                cout << "Opcao invalida! Tente novamente." << endl;
+    public:
+    MeuGrafo(bool orientado) {
+        grafoReal = new grafo(0, orientado, true);
+    }
+    
+    ~MeuGrafo() {
+        delete grafoReal;
+    }
+
+    void inserirVertice(int v) {
+        while (v >= grafoReal->getNumVertices()) {
+            grafoReal->inserirVertice();
         }
     }
 
+    void inserirAresta(int u, int v, double peso = 1.0) {
+        grafoReal->inserirAresta(u, v, static_cast<int>(peso));
+    }
+
+    bool verificarAresta(int u, int v) {
+        return grafoReal->verificarExisteAresta(u, v);
+    }
+
+    void alterarPesoAresta(int u, int v, double peso) {
+        grafoReal->alterarPesoAresta(u, v, static_cast<int>(peso));
+    }
+
+    int grauVertice(int v) {
+        return grafoReal->calcularGrauVertice(v);
+    }
+
+    std::vector<int> listarVizinhos(int v) {
+        return grafoReal->listarVizinhosVertice(v);
+    }
+
+    bool saoAdjacentes(int u, int v) {
+        return grafoReal->verificarAdjacentes(u, v);
+    }
+
+    void removerAresta(int u, int v) {
+        grafoReal->removerAresta(u, v);
+    }
+
+    void removerVertice(int v) {
+        grafoReal->removerVertice(v);
+    }
+
+    void exibirGrafo() {
+        grafoReal->exibirGrafo();
+    }
+};
+
+void testAll() {
+    MeuGrafo gNaoOrientado(false); // Instancia de Grafo NAO Orientado via Wrapper
+    MeuGrafo gOrientado(true);     // Instancia de Grafo ORIENTADO via Wrapper
+
+    int passou = 0;
+    int falhou = 0;
+    int excecoes = 0;
+
+    std::cout << "==================================================\n";
+    std::cout << "              BATERIA DE TESTES \n";
+    std::cout << "==================================================\n\n";
+
+    // -------------------------------------------------------------------------
+    // PARTE A: TESTES EM GRAFO NÃO ORIENTADO
+    // -------------------------------------------------------------------------
+    std::cout << "--------------------------------------------------\n";
+    std::cout << "      Fase 1: Testando Grafo Nao Orientado        \n";
+    std::cout << "--------------------------------------------------\n\n";
+
+    std::cout << "[TESTE] Inserindo vertices iniciais (0 a 5)...\n";
+    try {
+        for (int i = 0; i <= 5; i++) gNaoOrientado.inserirVertice(i);
+        std::cout << "  STATUS: PASSOU\n\n";
+        passou++;
+    } catch (...) {
+        std::cout << "  STATUS: FALHOU (Lancou excecao ao inserir vertices)\n\n";
+        excecoes++;
+    }
+
+    std::cout << "[TESTE] Inserindo malha de arestas...\n";
+    try {
+        gNaoOrientado.inserirAresta(0, 1, 1.5);
+        gNaoOrientado.inserirAresta(0, 2, 2.0);
+        gNaoOrientado.inserirAresta(1, 2, 1.0);
+        gNaoOrientado.inserirAresta(2, 3, 3.5);
+        gNaoOrientado.inserirAresta(3, 4, 4.0);
+        gNaoOrientado.inserirAresta(4, 5, 2.5);
+        gNaoOrientado.inserirAresta(3, 5, 5.0);
+        std::cout << "  STATUS: PASSOU\n\n";
+        passou++;
+    } catch (...) {
+        std::cout << "  STATUS: FALHOU (Lancou excecao ao inserir arestas)\n\n";
+        excecoes++;
+    }
+
+    std::cout << "[TESTE] Verificar existencia da aresta existente (0, 1):\n";
+    std::cout << "  Saida Esperada: VERDADEIRO\n";
+    try {
+        bool obtido = gNaoOrientado.verificarAresta(0, 1);
+        std::cout << "  Saida Obtida:   " << (obtido ? "VERDADEIRO" : "FALSO") << "\n";
+        if (obtido) { std::cout << "  STATUS:         PASSOU\n\n"; passou++; }
+        else { std::cout << "  STATUS:         FALHOU\n\n"; falhou++; }
+    } catch (...) {
+        std::cout << "  Saida Obtida:   EXCECAO LANCADA / CRASH\n  STATUS:         FALHOU\n\n";
+        excecoes++;
+    }
+
+    std::cout << "[TESTE] Verificar existencia na direcao inversa (1, 0):\n";
+    std::cout << "  Saida Esperada: VERDADEIRO\n";
+    try {
+        bool obtido = gNaoOrientado.verificarAresta(1, 0);
+        std::cout << "  Saida Obtida:   " << (obtido ? "VERDADEIRO" : "FALSO") << "\n";
+        if (obtido) { std::cout << "  STATUS:         PASSOU\n\n"; passou++; }
+        else { std::cout << "  STATUS:         FALHOU\n\n"; falhou++; }
+    } catch (...) {
+        std::cout << "  Saida Obtida:   EXCECAO LANCADA / CRASH\n  STATUS:         FALHOU\n\n";
+        excecoes++;
+    }
+
+    std::cout << "[TESTE] Verificar aresta inexistente entre vertices existentes (0, 5):\n";
+    std::cout << "  Saida Esperada: FALSO\n";
+    try {
+        bool obtido = gNaoOrientado.verificarAresta(0, 5);
+        std::cout << "  Saida Obtida:   " << (obtido ? "VERDADEIRO" : "FALSO") << "\n";
+        if (!obtido) { std::cout << "  STATUS:         PASSOU\n\n"; passou++; }
+        else { std::cout << "  STATUS:         FALHOU\n\n"; falhou++; }
+    } catch (...) {
+        std::cout << "  Saida Obtida:   EXCECAO LANCADA / CRASH\n  STATUS:         FALHOU\n\n";
+        excecoes++;
+    }
+
+    std::cout << "[TESTE] Verificar vertices invalidos/inexistentes (99, 100):\n";
+    std::cout << "  Saida Esperada: FALSO \n";
+    try {
+        bool obtido = gNaoOrientado.verificarAresta(99, 100);
+        std::cout << "  Saida Obtida:   " << (obtido ? "VERDADEIRO" : "FALSO") << "\n";
+        if (!obtido) { std::cout << "  STATUS:         PASSOU\n\n"; passou++; }
+        else { std::cout << "  STATUS:         FALHOU\n\n"; falhou++; }
+    } catch (...) {
+        std::cout << "  Saida Obtida:   EXCECAO LANCADA / CRASH\n  STATUS:         FALHOU\n\n";
+        excecoes++;
+    }
+
+    std::cout << "[TESTE] Alterar peso da aresta (2, 3) para 9.9:\n";
+    std::cout << "  Saida Esperada: Modificacao executada com sucesso\n";
+    try {
+        gNaoOrientado.alterarPesoAresta(2, 3, 9.9);
+        std::cout << "  Saida Obtida:   Modificacao executada com sucesso\n  STATUS:         PASSOU\n\n";
+        passou++;
+    } catch (...) {
+        std::cout << "  Saida Obtida:   EXCECAO LANCADA / CRASH\n  STATUS:         FALHOU\n\n";
+        excecoes++;
+    }
+
+    std::cout << "[TESTE] Calcular grau do vertice 2 (Conectado a 0, 1 e 3):\n";
+    std::cout << "  Saida Esperada: 3\n";
+    try {
+        int obtido = gNaoOrientado.grauVertice(2);
+        std::cout << "  Saida Obtida:   " << obtido << "\n";
+        if (obtido == 3) { std::cout << "  STATUS:         PASSOU\n\n"; passou++; }
+        else { std::cout << "  STATUS:         FALHOU\n\n"; falhou++; }
+    } catch (...) {
+        std::cout << "  Saida Obtida:   EXCECAO LANCADA / CRASH\n  STATUS:         FALHOU\n\n";
+        excecoes++;
+    }
+
+    std::cout << "[TESTE] Calcular grau de vertice inexistente (99):\n";
+    std::cout << "  Saida Esperada: 0 (Tratado sem travar)\n";
+    try {
+        int obtido = gNaoOrientado.grauVertice(99);
+        std::cout << "  Saida Obtida:   " << obtido << "\n";
+        if (obtido == 0) { std::cout << "  STATUS:         PASSOU\n\n"; passou++; }
+        else { std::cout << "  STATUS:         FALHOU\n\n"; falhou++; }
+    } catch (...) {
+        std::cout << "  Saida Obtida:   EXCECAO LANCADA / CRASH\n  STATUS:         FALHOU\n\n";
+        excecoes++;
+    }
+
+    std::cout << "[TESTE] Listar vizinhos do vertice 3:\n";
+    std::cout << "  Saida Esperada: [2, 4, 5]\n";
+    try {
+        std::vector<int> obtido = gNaoOrientado.listarVizinhos(3);
+        std::sort(obtido.begin(), obtido.end());
+        std::cout << "  Saida Obtida:   [";
+        for (size_t i = 0; i < obtido.size(); ++i) {
+            std::cout << obtido[i] << (i == obtido.size() - 1 ? "" : ", ");
+        }
+        std::cout << "]\n";
+        bool correto = (obtido.size() == 3 && obtido[0] == 2 && obtido[1] == 4 && obtido[2] == 5);
+        if (correto) { std::cout << "  STATUS:         PASSOU\n\n"; passou++; }
+        else { std::cout << "  STATUS:         FALHOU\n\n"; falhou++; }
+    } catch (...) {
+        std::cout << "  Saida Obtida:   EXCECAO LANCADA / CRASH\n  STATUS:         FALHOU\n\n";
+        excecoes++;
+    }
+
+    std::cout << "[TESTE] Verificar se 4 e 5 de forma bidirecional sao adjacentes:\n";
+    std::cout << "  Saida Esperada: (4,5)=VERDADEIRO e (5,4)=VERDADEIRO\n";
+    try {
+        bool dir1 = gNaoOrientado.saoAdjacentes(4, 5);
+        bool dir2 = gNaoOrientado.saoAdjacentes(5, 4);
+        std::cout << "  Saida Obtida:   (4,5): " << (dir1 ? "VERDADEIRO" : "FALSO") << " | (5,4): " << (dir2 ? "VERDADEIRO" : "FALSO") << "\n";
+        if (dir1 && dir2) { std::cout << "  STATUS:         PASSOU\n\n"; passou++; }
+        else { std::cout << "  STATUS:         FALHOU\n\n"; falhou++; }
+    } catch (...) {
+        std::cout << "  Saida Obtida:   EXCECAO LANCADA / CRASH\n  STATUS:         FALHOU\n\n";
+        excecoes++;
+    }
+
+    std::cout << "[TESTE] Remover aresta (3, 4):\n";
+    std::cout << "  Saida Esperada: FALSO para ambas as direcoes\n";
+    try {
+        gNaoOrientado.removerAresta(3, 4);
+        bool aindaExisteDireto = gNaoOrientado.verificarAresta(3, 4);
+        bool aindaExisteInverso = gNaoOrientado.verificarAresta(4, 3);
+        std::cout << "  Saida Obtida:   Aresta (3,4) existe? " << (aindaExisteDireto ? "VERDADEIRO" : "FALSO") << "\n";
+        std::cout << "                  Aresta (4,3) existe? " << (aindaExisteInverso ? "VERDADEIRO" : "FALSO") << "\n";
+        if (!aindaExisteDireto && !aindaExisteInverso) { std::cout << "  STATUS:         PASSOU\n\n"; passou++; }
+        else { std::cout << "  STATUS:         FALHOU\n\n"; falhou++; }
+    } catch (...) {
+        std::cout << "  Saida Obtida:   EXCECAO LANCADA / CRASH\n  STATUS:         FALHOU\n\n";
+        excecoes++;
+    }
+
+    std::cout << "[TESTE] Remover vertice 2 (Remocao de No Central):\n";
+    std::cout << "  Saida Esperada: FALSO para adjacencias com vizinhos antigo e reducao de graus\n";
+    try {
+        gNaoOrientado.removerVertice(2);
+        bool adj02 = gNaoOrientado.saoAdjacentes(0, 2);
+        bool adj12 = gNaoOrientado.saoAdjacentes(1, 2);
+        int grauRestante0 = gNaoOrientado.grauVertice(0);
+        std::cout << "  Saida Obtida:   Adjacente (0,2)? " << (adj02 ? "VERDADEIRO" : "FALSO") << " | Adjacente (1,2)? " << (adj12 ? "VERDADEIRO" : "FALSO") << "\n";
+        std::cout << "                  Grau restante do vertice 0: " << grauRestante0 << " (Esperado: 1, conectado apenas ao 1)\n";
+        if (!adj02 && !adj12 && grauRestante0 == 1) { std::cout << "  STATUS:         PASSOU\n\n"; passou++; }
+        else { std::cout << "  STATUS:         FALHOU (Deixou arestas orfas estruturais)\n\n"; falhou++; }
+    } catch (...) {
+        std::cout << "  Saida Obtida:   EXCECAO LANCADA / CRASH\n  STATUS:         FALHOU\n\n";
+        excecoes++;
+    }
+
+    // -------------------------------------------------------------------------
+    // PARTE B: TESTES EM GRAFO ORIENTADO
+    // -------------------------------------------------------------------------
+    std::cout << "--------------------------------------------------\n";
+    std::cout << "        Fase 2: Testando Grafo Orientado          \n";
+    std::cout << "--------------------------------------------------\n\n";
+
+    std::cout << "[TESTE] Inserindo vertices iniciais (0 a 5)...\n";
+    try {
+        for (int i = 0; i <= 5; i++) gOrientado.inserirVertice(i);
+        std::cout << "  STATUS: PASSOU\n\n";
+        passou++;
+    } catch (...) {
+        std::cout << "  STATUS: FALHOU\n\n";
+        excecoes++;
+    }
+
+    std::cout << "[TESTE] Inserindo malha direcionada de arcos (Ciclos: 0->1->2->0 e 3->4->5->3)...\n";
+    try {
+        gOrientado.inserirAresta(0, 1, 1.0);
+        gOrientado.inserirAresta(1, 2, 2.0);
+        gOrientado.inserirAresta(2, 0, 3.0);
+        gOrientado.inserirAresta(2, 3, 1.5);
+        gOrientado.inserirAresta(3, 4, 2.5);
+        gOrientado.inserirAresta(4, 5, 3.5);
+        gOrientado.inserirAresta(5, 3, 4.5);
+
+        std::cout << "  STATUS: PASSOU\n\n";
+        passou++;
+    } catch (...) {
+        std::cout << "  STATUS: FALHOU\n\n";
+        excecoes++;
+    }
+
+    std::cout << "[TESTE] Verificar existencia da aresta direcionada existente (0, 1):\n";
+    std::cout << "  Saida Esperada: VERDADEIRO\n";
+    try {
+        bool obtido = gOrientado.verificarAresta(0, 1);
+        std::cout << "  Saida Obtida:   " << (obtido ? "VERDADEIRO" : "FALSO") << "\n";
+        if (obtido) { std::cout << "  STATUS:         PASSOU\n\n"; passou++; }
+        else { std::cout << "  STATUS:         FALHOU\n\n"; falhou++; }
+    } catch (...) {
+        std::cout << "  Saida Obtida:   EXCECAO LANCADA\n  STATUS:         FALHOU\n\n";
+        excecoes++;
+    }
+
+    std::cout << "[TESTE] Verificar existencia na direcao inversa (1, 0):\n";
+    std::cout << "  Saida Esperada: FALSO\n";
+    try {
+        bool obtido = gOrientado.verificarAresta(1, 0);
+        std::cout << "  Saida Obtida:   " << (obtido ? "VERDADEIRO" : "FALSO") << "\n";
+        if (!obtido) { std::cout << "  STATUS:         PASSOU\n\n"; passou++; }
+        else { std::cout << "  STATUS:         FALHOU\n\n"; falhou++; }
+    } catch (...) {
+        std::cout << "  Saida Obtida:   EXCECAO LANCADA\n  STATUS:         FALHOU\n\n";
+        excecoes++;
+    }
+
+    std::cout << "[TESTE] Verificar arco inexistente entre vertices existentes (0, 5):\n";
+    std::cout << "  Saida Esperada: FALSO\n";
+    try {
+        bool obtido = gOrientado.verificarAresta(0, 5);
+        std::cout << "  Saida Obtida:   " << (obtido ? "VERDADEIRO" : "FALSO") << "\n";
+        if (!obtido) { std::cout << "  STATUS:         PASSOU\n\n"; passou++; }
+        else { std::cout << "  STATUS:         FALHOU\n\n"; falhou++; }
+    } catch (...) {
+        std::cout << "  Saida Obtida:   EXCECAO LANCADA\n  STATUS:         FALHOU\n\n";
+        excecoes++;
+    }
+
+    std::cout << "[TESTE] Verificar vertices invalidos/inexistentes no Orientado (99, 100):\n";
+    std::cout << "  Saida Esperada: FALSO\n";
+    try {
+        bool obtido = gOrientado.verificarAresta(99, 100);
+        std::cout << "  Saida Obtida:   " << (obtido ? "VERDADEIRO" : "FALSO") << "\n";
+        if (!obtido) { std::cout << "  STATUS:         PASSOU\n\n"; passou++; }
+        else { std::cout << "  STATUS:         FALHOU\n\n"; falhou++; }
+    } catch (...) {
+        std::cout << "  Saida Obtida:   EXCECAO LANCADA\n  STATUS:         FALHOU\n\n";
+        excecoes++;
+    }
+
+    std::cout << "[TESTE] Verificar Adjacencia Unidirecional (2, 3) vs (3, 2):\n";
+    std::cout << "  Saida Esperada: (2,3)=VERDADEIRO e (3,2)=FALSO\n";
+    try {
+        bool dir1 = gOrientado.saoAdjacentes(2, 3);
+        bool dir2 = gOrientado.saoAdjacentes(3, 2);
+        std::cout << "  Saida Obtida:   (2,3): " << (dir1 ? "VERDADEIRO" : "FALSO") << " | (3,2): " << (dir2 ? "VERDADEIRO" : "FALSO") << "\n";
+        if (dir1 && !dir2) { std::cout << "  STATUS:         PASSOU\n\n"; passou++; }
+        else { std::cout << "  STATUS:         FALHOU\n\n"; falhou++; }
+    } catch (...) {
+        std::cout << "  Saida Obtida:   EXCECAO LANCADA\n  STATUS:         FALHOU\n\n";
+        excecoes++;
+    }
+
+    std::cout << "[TESTE] Remover arco direcionado (4, 5):\n";
+    std::cout << "  Saida Esperada: FALSO para (4,5)\n";
+    try {
+        gOrientado.removerAresta(4, 5);
+        bool aindaExiste = gOrientado.verificarAresta(4, 5);
+        std::cout << "  Saida Obtida:   Arco (4,5) ainda existe? " << (aindaExiste ? "VERDADEIRO" : "FALSO") << "\n";
+        if (!aindaExiste) { std::cout << "  STATUS:         PASSOU\n\n"; passou++; }
+        else { std::cout << "  STATUS:         FALHOU\n\n"; falhou++; }
+    } catch (...) {
+        std::cout << "  Saida Obtida:   EXCECAO LANCADA\n  STATUS:         FALHOU\n\n";
+        excecoes++;
+    }
+
+    std::cout << "[TESTE] Remover vertice 3 (Ponto de articulacao dos ciclos):\n";
+    std::cout << "  Saida Esperada: FALSO para arcos de entrada (2,3) e de saida (3,4)\n";
+    try {
+        gOrientado.removerVertice(3);
+        bool adj23 = gOrientado.saoAdjacentes(2, 3);
+        bool adj53 = gOrientado.saoAdjacentes(5, 3);
+        std::cout << "  Saida Obtida:   Adjacencia (2,3)? " << (adj23 ? "VERDADEIRO" : "FALSO") << "\n";
+        std::cout << "                  Adjacencia (5,3)? " << (adj53 ? "VERDADEIRO" : "FALSO") << "\n";
+        if (!adj23 && !adj53) { std::cout << "  STATUS:         PASSOU\n\n"; passou++; }
+        else { std::cout << "  STATUS:         FALHOU\n\n"; falhou++; }
+    } catch (...) {
+        std::cout << "  Saida Obtida:   EXCECAO LANCADA\n  STATUS:         FALHOU\n\n";
+        excecoes++;
+    }
+
+    std::cout << "[TESTE] Exibir estado impresso dos grafos finais:\n";
+    std::cout << "--------------------------------------------------\n";
+    try {
+        std::cout << ">> GRAFO NAO ORIENTADO RESULTANTE:\n";
+        gNaoOrientado.exibirGrafo();
+
+        std::cout << "\n>> GABARITO ESPERADO PARA O NAO ORIENTADO (FORMATO CS ACADEMY):\n";
+        std::cout << "5\n0 1 1.5\n4 5 2.5\n3 5 5.0\n";
+
+        std::cout << "\n==================================================\n";
+
+        std::cout << ">> GRAFO ORIENTADO RESULTANTE:\n";
+        gOrientado.exibirGrafo();
+
+        std::cout << "\n>> GABARITO ESPERADO PARA O ORIENTADO (FORMATO CS ACADEMY):\n";
+        std::cout << "5\n0 1 1\n1 2 2\n2 0 3\n";
+
+        std::cout << "--------------------------------------------------\n";
+        std::cout << "  STATUS:         PASSOU\n\n";
+        passou++;
+    } catch (...) {
+        std::cout << "--------------------------------------------------\n";
+        std::cout << "  STATUS:         FALHOU \n\n";
+        excecoes++;
+    }
+
+    std::cout << "==================================================\n";
+    std::cout << "         RESUMO FINAL DA BATERIA DE TESTES        \n";
+    std::cout << "==================================================\n";
+    std::cout << "  TESTES QUE PASSARAM: " << passou << "\n";
+    std::cout << "  TESTES QUE FALHARAM: " << falhou << "\n";
+    std::cout << "  EXCECOES CAPTURADAS: " << excecoes << "\n";
+    std::cout << "  TOTAL DE CASOS TESTADOS: " << (passou + falhou + excecoes) << "\n";
+    std::cout << "==================================================\n";
+}
+
+int main() {
+    testAll();
     return 0;
 }
