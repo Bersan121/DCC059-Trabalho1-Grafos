@@ -10,7 +10,7 @@ using namespace std;
 // Estrutura para representar cada célula da Matriz de Adjacência
 struct aresta {
 bool existe = false;
-int peso = 0;
+double peso = 0;
 };
 
 class grafo {
@@ -27,10 +27,10 @@ class grafo {
     // Manipulação do grafo
     void inserirVertice();
     void removerVertice(int v);
-    void inserirAresta(int u, int v, int peso = 1);
+    void inserirAresta(int u, int v, double peso = 1.0);
     void removerAresta(int u, int v);
     bool verificarExisteAresta(int u, int v) const;
-    void alterarPesoAresta(int u, int v, int novoPeso);
+    void alterarPesoAresta(int u, int v, double novoPeso);
     void exibirGrafo() const;
     int getNumVertices() const;
     int getPonderado() const;

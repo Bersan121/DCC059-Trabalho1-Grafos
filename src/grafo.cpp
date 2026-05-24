@@ -26,7 +26,8 @@ grafo grafo::carregarDeArquivo(const string& nomeArquivo, bool orientado, bool p
     string linha;
     int maxVertice = -1;
     struct DadosAresta {
-        int u, v, peso;
+        int u, v;
+        double peso;
     };
     vector<DadosAresta> arestasLidas;
 
@@ -35,7 +36,8 @@ grafo grafo::carregarDeArquivo(const string& nomeArquivo, bool orientado, bool p
         if(linha.empty())
             continue;
         stringstream ss(linha);
-        int u, v, peso = 1;
+        int u, v;
+        double peso = 1.0;
         if(ss >> u >> v){
             if(ponderado)
                 ss >> peso;
@@ -102,7 +104,7 @@ void grafo::removerVertice(int v){
     cout << "Vertice " << v << " removido com sucesso!" << endl;
 }
 
-void grafo::inserirAresta(int u, int v, int peso){
+void grafo::inserirAresta(int u, int v, double peso){
     if(u < 0 || v < 0){
         cout << "Operacao invalida!"<< endl;
     }
@@ -128,14 +130,14 @@ void grafo::inserirAresta(int u, int v, int peso){
         if(ponderado)
             matrizAdjacencia[u][v].peso = peso;
         else
-            matrizAdjacencia[u][v].peso = 1;
+            matrizAdjacencia[u][v].peso = 1.0;
 
         if(!orientado){
             matrizAdjacencia[v][u].existe = true;
             if(ponderado)
                 matrizAdjacencia[v][u].peso = peso;
             else
-                matrizAdjacencia[v][u].peso = 1;
+                matrizAdjacencia[v][u].peso = 1.0;
         }
         cout << "Aresta inserida com sucesso!" << endl;
     }
@@ -144,21 +146,21 @@ void grafo::inserirAresta(int u, int v, int peso){
 void grafo::removerAresta(int u, int v){
 
     if(u < 0 || v < 0 || u >= numVertices || v >= numVertices){
-        cout << "Índices inválidos" << endl;
+        cout << "Indices invalidos" << endl;
         return;
     }
 
-    if(verificarExisteAresta(u, v)){
-        cout << "Não existe aresta entre os vértices " << u << " e " << v << endl;
+    if(!verificarExisteAresta(u, v)){
+        cout << "Nao existe aresta entre os vertices " << u << " e " << v << endl;
         return;
     }
 
     matrizAdjacencia[u][v].existe = false;
-    matrizAdjacencia[u][v].peso = 0;
+    matrizAdjacencia[u][v].peso = 0.0;
 
     if(!orientado){
         matrizAdjacencia[v][u].existe = false;
-        matrizAdjacencia[v][u].peso = 0;
+        matrizAdjacencia[v][u].peso = 0.0;
     }
 
     cout << "Aresta removida com sucesso!" << endl;
@@ -171,12 +173,12 @@ bool grafo::verificarExisteAresta(int u, int v) const{
         return matrizAdjacencia[u][v].existe;
 }
 
-void grafo::alterarPesoAresta(int u, int v, int novoPeso){
+void grafo::alterarPesoAresta(int u, int v, double novoPeso){
     if(verificarExisteAresta(u, v)){
         matrizAdjacencia[u][v].peso = novoPeso;
     }
     else{
-        cout << "Aresta não existe!" << endl;
+        cout << "Aresta nao existe!" << endl;
         return;
     }
 
@@ -244,7 +246,7 @@ visitados[u] = true;
 
         for (int v = 0; v < numVertices; v++) {
         if (matrizAdjacencia[u][v].existe && !visitados[v]) {
-int pesoAresta = matrizAdjacencia[u][v].peso;
+double pesoAresta = matrizAdjacencia[u][v].peso;
                 if (distancias[u] + pesoAresta < distancias[v]) {
 distancias[v] = distancias[u] + pesoAresta;
 predecessores[v] = u;
