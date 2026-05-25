@@ -517,7 +517,7 @@ void program(){
 }
 
 int main() {
-    //testAll();
-    program();
+    testAll();
+    //program();
     return 0;
 }
