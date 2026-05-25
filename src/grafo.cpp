@@ -17,6 +17,7 @@ grafo::grafo(int numVertices, bool orientado, bool ponderado){
 }
 
 grafo grafo::carregarDeArquivo(const string& nomeArquivo, bool orientado, bool ponderado){
+    //abrir arquivo
     ifstream arquivo(nomeArquivo);
     if(!arquivo.is_open()){
         cout << "Erro ao abrir o arquivo.\nCriando grafo vazio." << endl;
@@ -53,7 +54,7 @@ grafo grafo::carregarDeArquivo(const string& nomeArquivo, bool orientado, bool p
     //Criar o grafo
     grafo g(maxVertice+1, orientado, ponderado);
 
-    for(size_t i = 0; i < arestasLidas.size(); ++i) {
+    for(size_t i = 0; i < arestasLidas.size(); ++i){
         g.inserirAresta(arestasLidas[i].u, arestasLidas[i].v, arestasLidas[i].peso);
     }
     cout << "Grafo carregado de " << nomeArquivo << endl;
@@ -61,27 +62,28 @@ grafo grafo::carregarDeArquivo(const string& nomeArquivo, bool orientado, bool p
 }
 
 void grafo::exibirGrafo() const{
-cout << endl << "Matriz de Adjacencia" << endl;
-cout << "   ";
-        for(int i = 0; i < numVertices; i++)
-cout << setw(4) << i;
-cout << endl;
-
+    cout << endl << "Matriz de Adjacencia" << endl;
+    //Coluna dos vértices
+    cout << "   ";
+    for(int i = 0; i < numVertices; i++)
+        cout << setw(4) << i;
+    cout << endl;
+    //Matriz de adjacência
     for(int i = 0; i < numVertices; i++){
-cout << setw(2) << i << " ";
+        cout << setw(2) << i << " ";
         for(int j = 0; j < numVertices; j++){
-        if(matrizAdjacencia[i][j].existe){
-        if(ponderado)
-cout << setw(4) << matrizAdjacencia[i][j].peso;
+            if(matrizAdjacencia[i][j].existe){
+                if(ponderado)
+                    cout << setw(4) << matrizAdjacencia[i][j].peso;
                 else
-cout << setw(4) << "1";
-        }
-        else
-cout << setw(4) << ".";
-        }
-cout << endl;
-    }
+                    cout << setw(4) << "1";
             }
+            else
+                cout << setw(4) << ".";
+        }
+        cout << endl;
+    }
+}
 
 void grafo::inserirVertice(){
     for(int i = 0; i < numVertices; i++){
@@ -108,9 +110,10 @@ void grafo::inserirAresta(int u, int v, double peso){
     if(u < 0 || v < 0){
         cout << "Operacao invalida!"<< endl;
     }
+    //Inclusão de aresta para vertice inexistente
     else if(u >= numVertices){
         if(u == v){
-            cout << "Vertice " << u << " sera criados na posicao " << numVertices << endl;
+            cout << "Vertice " << u << " sera criado na posicao " << numVertices << endl;
             this->inserirVertice();
             this->inserirAresta(numVertices -1, numVertices -1, peso);
         }
@@ -125,6 +128,7 @@ void grafo::inserirAresta(int u, int v, double peso){
         this->inserirVertice();
         this->inserirAresta(u, numVertices -1, peso);
     }
+    //Inclusão de aresta para vertices existentes
     else{
         matrizAdjacencia[u][v].existe = true;
         if(ponderado)
@@ -190,31 +194,33 @@ void grafo::alterarPesoAresta(int u, int v, double novoPeso){
 }
 
 int grafo::calcularGrauVertice(int v) const{
-        if (v < 0 || v >= numVertices) return 0;
-int grau = 0;
-
-    for (int i = 0; i < numVertices; i++) {
+    //vertice inexistente
+    if (v < 0 || v >= numVertices) return 0;
+    //vertice existente
+    int grau = 0;
+    for (int i = 0; i < numVertices; i++){
         if (matrizAdjacencia[v][i].existe) grau++;
+    }
+    //grafo orientado
+    if (orientado){
+        for (int i = 0; i < numVertices; i++){
+            if (matrizAdjacencia[i][v].existe) grau++;
         }
-
-        if (orientado) {
-        for (int i = 0; i < numVertices; i++) {
-        if (matrizAdjacencia[i][v].existe) grau++;
-        }
-        }
-        return grau;
+    }
+    return grau;
 }
 
 vector<int> grafo::listarVizinhosVertice(int v) const{
-vector<int> vizinhos;
-    if (v < 0 || v >= numVertices) return vizinhos;
-
-    for (int i = 0; i < numVertices; i++) {
-        if (matrizAdjacencia[v][i].existe) {
-        vizinhos.push_back(i);
-        }
-                }
-                return vizinhos;
+    vector<int> vizinhos;
+    //vertice inexistente
+    if (v < 0 || v >= numVertices)
+        return vizinhos;
+    //listar vizinhos em um vetor
+    for (int i = 0; i < numVertices; i++){
+        if (matrizAdjacencia[v][i].existe)
+            vizinhos.push_back(i);
+    }
+    return vizinhos;
 }
 
 bool grafo::verificarAdjacentes(int u, int v) const{
@@ -222,66 +228,68 @@ bool grafo::verificarAdjacentes(int u, int v) const{
 }
 
 void grafo::dijkstra(int origem) const{
-        if (origem >= numVertices || origem < 0) {
-cout << "Origem invalida!\n";
+    //vertice inexistente
+    if (origem >= numVertices || origem < 0){
+        cout << "Origem invalida!\n";
         return;
+    }
+
+    vector<int> distancias(numVertices, 1e9);
+    vector<int> predecessores(numVertices, -1);
+    vector<bool> visitados(numVertices, false);
+
+    distancias[origem] = 0;
+
+    for (int i = 0; i < numVertices; i++){
+        int u = -1;
+        for (int j = 0; j < numVertices; j++){
+            if (!visitados[j] && (u == -1 || distancias[j] < distancias[u])){
+            u = j;
+            }
         }
 
-vector<int> distancias(numVertices, 1e9);
-vector<int> predecessores(numVertices, -1);
-vector<bool> visitados(numVertices, false);
+        if (distancias[u] == 1e9)
+            break;
+        visitados[u] = true;
 
-distancias[origem] = 0;
-
-        for (int i = 0; i < numVertices; i++) {
-int u = -1;
-        for (int j = 0; j < numVertices; j++) {
-        if (!visitados[j] && (u == -1 || distancias[j] < distancias[u])) {
-u = j;
-            }
-                    }
-
-                    if (distancias[u] == 1e9) break;
-visitados[u] = true;
-
-        for (int v = 0; v < numVertices; v++) {
-        if (matrizAdjacencia[u][v].existe && !visitados[v]) {
-double pesoAresta = matrizAdjacencia[u][v].peso;
-                if (distancias[u] + pesoAresta < distancias[v]) {
-distancias[v] = distancias[u] + pesoAresta;
-predecessores[v] = u;
+        for (int v = 0; v < numVertices; v++){
+            if (matrizAdjacencia[u][v].existe && !visitados[v]){
+                double pesoAresta = matrizAdjacencia[u][v].peso;
+                if (distancias[u] + pesoAresta < distancias[v]){
+                    distancias[v] = distancias[u] + pesoAresta;
+                    predecessores[v] = u;
                 }
-                        }
-                        }
-                        }
-
-cout << "\n=====================================================\n";
-cout << "         RESULTADO DO ALGORITMO DE DIJKSTRA          \n";
-cout << "=====================================================\n";
-cout << "Vertice de Origem: " << origem << "\n";
-cout << "-----------------------------------------------------\n";
-cout << "Destino   Distancia      Caminho Mais Curto\n";
-cout << "-----------------------------------------------------\n";
-
-        for (int i = 0; i < numVertices; i++) {
-cout << left << setw(10) << i;
-        if (distancias[i] == 1e9) {
-cout << setw(15) << "Inatingivel" << "-\n";
-        } else {
-cout << setw(15) << distancias[i];
-vector<int> caminho;
-            for (int at = i; at != -1; at = predecessores[at]) {
-        caminho.push_back(at);
             }
-reverse(caminho.begin(), caminho.end());
-        for (size_t j = 0; j < caminho.size(); j++) {
-cout << caminho[j] << (j == caminho.size() - 1 ? "" : " -> ");
         }
-cout << "\n";
+    }
+
+    cout << "\n=====================================================\n";
+    cout << "         RESULTADO DO ALGORITMO DE DIJKSTRA          \n";
+    cout << "=====================================================\n";
+    cout << "Vertice de Origem: " << origem << "\n";
+    cout << "-----------------------------------------------------\n";
+    cout << "Destino   Distancia      Caminho Mais Curto\n";
+    cout << "-----------------------------------------------------\n";
+
+    for (int i = 0; i < numVertices; i++){
+        cout << left << setw(10) << i;
+        if (distancias[i] == 1e9){
+            cout << setw(15) << "Inatingivel" << "-\n";
+        } else {
+            cout << setw(15) << distancias[i];
+            vector<int> caminho;
+            for (int at = i; at != -1; at = predecessores[at]){
+                caminho.push_back(at);
+            }
+            reverse(caminho.begin(), caminho.end());
+            for (size_t j = 0; j < caminho.size(); j++){
+                cout << caminho[j] << (j == caminho.size() - 1 ? "" : " -> ");
+            }
+            cout << "\n";
         }
-        }
-cout << "=====================================================\n";
-        }
+    }
+    cout << "=====================================================\n";
+}
 
 int grafo::getNumVertices() const{
         return this->numVertices;

@@ -9,7 +9,7 @@ Este projeto foi desenvolvido utilizando C++ moderno. Certifique-se de ter um co
 ---
 Abra o seu terminal na raiz do projeto e execute o comando a seguir para compilar todos os arquivos presentes na pasta `src/`:
 
-$ g++ -std=c++11 src/main.cpp src/Grafo.cpp -o programa
+$ g++ -std=c++11 src/*.cpp -o programa
 
 Esse comando gerará um executável chamado `programa` (ou `programa.exe` no Windows).
 
