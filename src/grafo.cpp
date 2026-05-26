@@ -1,5 +1,5 @@
 #include "grafo.hpp"
-        #include <iostream>
+#include <iostream>
 #include <fstream>
 #include <sstream>
 #include <algorithm>
@@ -234,7 +234,7 @@ void grafo::dijkstra(int origem) const{
         return;
     }
 
-    vector<int> distancias(numVertices, 1e9);
+    vector<double> distancias(numVertices, 1e9);
     vector<int> predecessores(numVertices, -1);
     vector<bool> visitados(numVertices, false);
 
